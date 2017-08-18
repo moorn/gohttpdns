@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get install -y dnsutils
 
 script:
-  - go get -v -u github.com/ma6174/myhttpdns
+  - go get -v -u github.com/vinsonzou/gohttpdns
   - myhttpdns -bind "127.0.0.1:8053" &
   - sleep 0.1
   - dig +short @127.0.0.1 -p 8053 google.com

@@ -1,13 +1,13 @@
-# myhttpdns
+# gohttpdns
 
 DNS 服务器，接收标准 DNS 查询请求，然后通过查询 http dns 获取结果返回给客户端。
 
-[![Build Status](https://travis-ci.org/ma6174/myhttpdns.svg?branch=master)](https://travis-ci.org/ma6174/myhttpdns)
+[![Build Status](https://travis-ci.org/vinsonzou/gohttpdns.svg?branch=master)](https://travis-ci.org/vinsonzou/gohttpdns)
 
 ### 主要特性
 
 1. 对外通过 http dns 查询，避免 DNS 劫持
-2. 提供标准 DNS 查询接口，可以直接将机器的 dns 配置到 myhttpdns
+2. 提供标准 DNS 查询接口，可以直接将机器的 dns 配置到 gohttpdns
 3. DNS 查询结果根据 TTL 进行缓存
 4. 对外 DNS 查询请求归并
 5. 提供详细的审计日志，包括请求来源 IP、缓存个数、请求的域名、TTL、响应时间以及解析结果
@@ -18,11 +18,11 @@ DNS 服务器，接收标准 DNS 查询请求，然后通过查询 http dns 获�
 
 ### 如何安装
 
-	go get -v github.com/ma6174/myhttpdns
+	go get -v github.com/vinsonzou/gohttpdns
 
 ### 如何使用
 
-	sudo myhttpdns
+	sudo gohttpdns
 
 * 默认监听53端口需要管理员权限，可以增加`-bind "127.0.0.1:8053"`改变监听端口
 
@@ -51,7 +51,7 @@ $ dig +short @127.0.0.1 baidu.com
 程序日志输出
 
 ```bash
-$ sudo myhttpdns
+$ sudo gohttpdns
 2017/04/09 22:37:49 dns server running at 0.0.0.0:53
 2017/04/09 22:37:53 127.0.0.1:59022	139s	24.213ms	google.com.	[216.58.200.46]
 2017/04/09 22:37:54 127.0.0.1:50891	138s	0.075ms	google.com.	[216.58.200.46]
@@ -59,3 +59,6 @@ $ sudo myhttpdns
 2017/04/09 22:37:59 127.0.0.1:55850	97s	0.057ms	baidu.com.	[180.149.132.47 220.181.57.217 111.13.101.208 123.125.114.144]
 ```
 
+### TODO
+
+* 支持配置文件

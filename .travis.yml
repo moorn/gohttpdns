@@ -11,6 +11,6 @@ before_install:
 
 script:
   - go get -v -u github.com/vinsonzou/gohttpdns
-  - myhttpdns -bind "127.0.0.1:8053" &
+  - gohttpdns -bind "127.0.0.1:8053" &
   - sleep 0.1
   - dig +short @127.0.0.1 -p 8053 google.com

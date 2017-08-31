@@ -79,7 +79,7 @@ func (s *CachedHandler) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 	var (
 		info   *TTLInfo
 		start  time.Time = time.Now()
-		domain string    = r.Question[0].Name
+		domain string    = strings.ToLower(r.Question[0].Name)
 	)
 	defer func() {
 		if info == nil {

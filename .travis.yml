@@ -15,3 +15,4 @@ script:
   - gohttpdns -bind "127.0.0.1:8053" &
   - sleep 0.1
   - dig +short @127.0.0.1 -p 8053 google.com
+  - dig +short @127.0.0.1 -p 8053 Qq.com

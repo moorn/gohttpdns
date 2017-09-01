@@ -1,10 +1,10 @@
-hash: 1496c78812aeb3d9f0b4540469d15c2df8e76edfd299ed2343df90fcb17c900c
-updated: 2017-06-25T22:28:50.169345342+08:00
+hash: dcb1688e780fcec59b934a0ff2c789aba838aa6a8b16be8353b9f85c97089307
+updated: 2017-09-01T23:16:33.381125348+08:00
 imports:
 - name: github.com/golang/groupcache
   version: b710c8433bd175204919eb38776e944233235d03
   subpackages:
   - singleflight
 - name: github.com/miekg/dns
-  version: e78414ef75607394ad7d917824f07f381df2eafa
+  version: e4205768578dc90c2669e75a2f8a8bf77e3083a4
 testImports: []

@@ -80,6 +80,7 @@ func (s *CachedHandler) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 		info        *TTLInfo
 		start       time.Time = time.Now()
 		domain      string    = strings.ToLower(r.Question[0].Name)
+		domain_type uint16    = r.Question[0].Qtype
 		result_from string
 	)
 	defer func() {
@@ -92,21 +93,31 @@ func (s *CachedHandler) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 		from := strings.Split(w.RemoteAddr().String(), ":")[0]
 		domain = domain[:len(domain)-1]
 		if info.Err != nil {
-			log.Printf("%v\t%d\t%v\t%v\t%v", from, s.cache.Len(), result_from, domain, info.Err)
+			log.Printf("%v\t%d\t%v\t%v\t%d\t%v", from, s.cache.Len(), result_from, domain, domain_type, info.Err)
 			return
 		}
 		if err != nil {
-			log.Printf("%v\t%d\t%v\t%v\t%v", from, s.cache.Len(), result_from, domain, err)
+			log.Printf("%v\t%d\t%v\t%v\t%d\t%v", from, s.cache.Len(), result_from, domain, domain_type, err)
 			return
 		}
-		log.Printf("%v\t%d\t%v\t%vs\t%.3fms\t%v\t%v", from, s.cache.Len(), result_from,
-			info.TTL, time.Since(start).Seconds()*1000, domain, info.Records)
+		log.Printf("%v\t%d\t%v\t%vs\t%.3fms\t%v\t%d\t%v", from, s.cache.Len(), result_from,
+			info.TTL, time.Since(start).Seconds()*1000, domain, domain_type, info.Records)
 	}()
 	if domain == "myip." {
 		from := strings.Split(w.RemoteAddr().String(), ":")[0]
 		info = &TTLInfo{
 			Domain:  domain,
 			Records: []string{from},
+			TTL:     30,
+			TTLTo:   time.Now().Add(time.Second * 31),
+		}
+		return
+	}
+	// not support PTR Record
+	if domain_type == 12 {
+		info = &TTLInfo{
+			Domain:  domain,
+			Records: []string{"localhost"},
 			TTL:     30,
 			TTLTo:   time.Now().Add(time.Second * 31),
 		}

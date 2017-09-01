@@ -140,7 +140,7 @@ func (s *CachedHandler) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 		return info, nil
 	})
 	info = i.(*TTLInfo)
-	if len(info.Records[0]) != 0 {
+	if len(info.Records) != 0 && len(info.Records[0]) != 0 {
 		return
 	}
 	i, _ = s.group.Do(domain, func() (interface{}, error) {

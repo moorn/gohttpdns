@@ -77,9 +77,10 @@ func (s *CachedHandler) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 		return
 	}
 	var (
-		info   *TTLInfo
-		start  time.Time = time.Now()
-		domain string    = strings.ToLower(r.Question[0].Name)
+		info        *TTLInfo
+		start       time.Time = time.Now()
+		domain      string    = strings.ToLower(r.Question[0].Name)
+		result_from string
 	)
 	defer func() {
 		if info == nil {
@@ -91,14 +92,14 @@ func (s *CachedHandler) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 		from := strings.Split(w.RemoteAddr().String(), ":")[0]
 		domain = domain[:len(domain)-1]
 		if info.Err != nil {
-			log.Printf("%v\t%d\t%v\t%v", from, s.cache.Len(), domain, info.Err)
+			log.Printf("%v\t%d\t%v\t%v\t%v", from, s.cache.Len(), result_from, domain, info.Err)
 			return
 		}
 		if err != nil {
-			log.Printf("%v\t%d\t%v\t%v", from, s.cache.Len(), domain, err)
+			log.Printf("%v\t%d\t%v\t%v\t%v", from, s.cache.Len(), result_from, domain, err)
 			return
 		}
-		log.Printf("%v\t%d\t%vs\t%.3fms\t%v\t%v", from, s.cache.Len(),
+		log.Printf("%v\t%d\t%v\t%vs\t%.3fms\t%v\t%v", from, s.cache.Len(), result_from,
 			info.TTL, time.Since(start).Seconds()*1000, domain, info.Records)
 	}()
 	if domain == "myip." {
@@ -111,24 +112,28 @@ func (s *CachedHandler) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 		}
 		return
 	}
+	result_from = "host"
 	info = s.GetFromHostFile(domain)
 	if info != nil {
 		return
 	}
+	result_from = "cache"
 	info = s.cache.Get(domain)
 	if info != nil {
 		return
 	}
 	i, _ := s.group.Do(domain, func() (interface{}, error) {
+		result_from = "httpdns"
 		info := s.backend.Query(domain)
 		s.cache.Put(info)
 		return info, nil
 	})
 	info = i.(*TTLInfo)
-	if info != nil {
+	if len(info.Records[0]) != 0 {
 		return
 	}
 	i, _ = s.group.Do(domain, func() (interface{}, error) {
+		result_from = "localdns"
 		info := QueryFromDNSServer(domain)
 		s.cache.Put(info)
 		return info, nil
